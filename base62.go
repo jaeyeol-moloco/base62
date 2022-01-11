@@ -245,6 +245,9 @@ func EncodedLen(n int) int {
 
 func EncodeToString(data []byte) string {
 	var buf bytes.Buffer
+	// Grows buf size in advance to avoid memalloc overhead by incrementally adjusting the capacity.
+	// The multiplier 8/5 is usually sufficient to accomodate the encoded data.
+	buf.Grow(len(data) * 8 / 5)
 	e := NewEncoder(&buf)
 	e.Write(data)
 	e.Close()
